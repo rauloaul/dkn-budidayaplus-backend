@@ -1,0 +1,53 @@
+name: Build
+
+on:
+  push:
+    branches:
+      
+'**'
+pull_request:
+  types: [opened, synchronize, reopened]
+
+jobs:
+  sonarcloud:
+    name: SonarCloud
+    runs-on: ubuntu-latest
+    steps:
+      
+name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+      
+name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
+
+      
+name: Install dependencies
+      run: |
+        python -m venv venv  # Create a virtual environment
+        source venv/bin/activate  # Activate the virtual environment
+        pip install -r requirements.txt  # Install project dependencies
+        pip install coverage  # Install coverage tool
+
+      
+name: Apply database migrations
+      run: |
+        source venv/bin/activate
+        python manage.py migrate
+
+      
+name: Run tests with coverage
+      run: |
+        source venv/bin/activate
+        coverage run --source='.' manage.py test  # Run Django tests with coverage
+        coverage xml  # Output coverage report to XML
+
+      
+name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
