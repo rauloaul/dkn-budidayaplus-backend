@@ -24,10 +24,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m venv venv  # Create a virtual environment
-          source venv/bin/activate  # Activate the virtual environment
-          pip install -r requirements.txt  # Install project dependencies
-          pip install coverage  # Install coverage tool
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+          pip install coverage
 
       - name: Apply database migrations
         run: |
@@ -38,9 +38,13 @@ jobs:
         run: |
           source venv/bin/activate
           coverage run --source='.' manage.py test  # Run Django tests with coverage
-          coverage xml  # Output coverage report to XML
+          coverage xml
+          coverage report
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: |
+            -Dsonar.python.coverage.reportPaths=coverage.xml
