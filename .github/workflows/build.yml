@@ -37,9 +37,9 @@ jobs:
       - name: Run tests with coverage
         run: |
           source venv/bin/activate
-          coverage run --source='.' manage.py test  # Run Django tests with coverage
-          coverage xml
+          coverage run manage.py test
           coverage report
+          coverage xml
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
