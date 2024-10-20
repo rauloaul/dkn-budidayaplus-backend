@@ -50,3 +50,6 @@ def update_pond(request, pond_id: str, payload: PondSchema):
 
     pond.save()
     return pond
+
+def get_hello(request):
+    return {"hello": "world"}
